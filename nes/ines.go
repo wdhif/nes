@@ -23,8 +23,9 @@ type iNESFileHeader struct {
 func Loader() int {
 	fmt.Println("Loading NES ROM")
 	// nestest from http://nickmass.com/images/nestest.nes
-	file, err := os.Open("/nestest.nes")
+	file, err := os.Open("nestest.nes")
 	if err != nil {
+		fmt.Println("File open error")
 		return 1
 	}
 	defer file.Close()
