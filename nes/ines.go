@@ -34,7 +34,7 @@ func Loader(romPath string) int {
 	fmt.Println(romHeader.MagicNumber)
 	fmt.Println(iNESMagicNumber)
 	// Check valid Magic Number against rom header
-	if romHeader.MagicNumber != 0x1a53454e {
+	if romHeader.MagicNumber != iNESMagicNumber {
 		panic("ROM is invalide: Invalid Magic Number")
 	}
 	fmt.Println("ROM is valid")
