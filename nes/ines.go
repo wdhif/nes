@@ -2,50 +2,56 @@ package nes
 
 import (
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"os"
 )
 
 // iNES Magic Number is "NES" followed by MS-DOS end-of-file
-// Stored in Little endian
+// Hexadecimal, stored in Little endian
 const iNESMagicNumber = 0x1a53454e
 
 type iNESFileHeader struct {
-	MagicNumber  uint32  // iNES Magic Number (32 bits)
-	ProgramROM   byte    // Number of 16 KB PRG-ROM banks (8 bits)
-	CharacterROM byte    // Number of 8 KB CHR-ROM banks (8 bits)
-	ControlByte1 byte    // ROM Control Byte 1 (8 bits)
-	ControlByte2 byte    // ROM Control Byte 2 (8 bits)
-	RAM          byte    // Number of 8 KB RAM banks (8 bits)
-	_            [7]byte // Unused, should all be 0 (8 bits)
+	MagicNumber  uint32  // iNES Magic Number (32 bits / bytes 0-3)
+	ProgramROM   byte    // Number of 16 KB PRG-ROM banks (8 bits / byte 4)
+	CharacterROM byte    // Number of 8 KB CHR-ROM banks (8 bits / byte 5)
+	ControlByte1 byte    // ROM Control Byte 1 (8 bits / byte 6)
+	ControlByte2 byte    // ROM Control Byte 2 (8 bits / byte 7)
+	RAM          byte    // Number of 8 KB RAM banks (8 bits / byte 8)
+	_            [7]byte // Unused, should all be 0 (8 bits / bytes 9-15)
 }
 
-// Loader reads an iNES file
-func Loader(romPath string) (error) {
+// Loader reads an iNES file and return a ROM
+func Loader(romPath string) (string, error) {
 	fmt.Println("Loading NES ROM")
 	file, err := os.Open(romPath)
 	if err != nil {
-		fmt.Println("File open error")
-		return nil
+		return "nil", errors.New("File open error")
 	}
 	defer file.Close()
 
 	romHeader := iNESFileHeader{}
 	binary.Read(file, binary.LittleEndian, &romHeader)
-	fmt.Println(romHeader)
+	fmt.Println("Rom header:", romHeader)
 
 	// Check valid Magic Number against rom header
 	if romHeader.MagicNumber != iNESMagicNumber {
-		panic("ROM is invalid: Invalid Magic Number")
+		return "nil", errors.New("ROM is invalid: Invalid Magic Number")
 	}
 	fmt.Println("ROM is valid")
 
-	// Mapper type
+	// Mapper type ()
 	mapperLowerBits := romHeader.ControlByte1 >> 4
 	mapperHigherBits := romHeader.ControlByte2 >> 4
-	mapper := mapperHigherBits | mapperLowerBits << 1
+	mapper := mapperHigherBits | mapperLowerBits<<1
 
-	fmt.Println(fmt.Sprintf("%b", romHeader))
-	fmt.Println(mapper)
-	return nil
+	fmt.Println("romHeader in binary:", fmt.Sprintf("%b", romHeader))
+	fmt.Println("MagicNumber in binary:", fmt.Sprintf("%b", romHeader.MagicNumber))
+	fmt.Println("ProgramROM in binary:", fmt.Sprintf("%b", romHeader.ProgramROM))
+	fmt.Println("CharacterROM in binary:", fmt.Sprintf("%b", romHeader.CharacterROM))
+	fmt.Println("ControlByte1 in binary:", fmt.Sprintf("%b", romHeader.ControlByte1))
+	fmt.Println("ControlByte2 in binary:", fmt.Sprintf("%b", romHeader.ControlByte2))
+	fmt.Println("RAM in binary:", fmt.Sprintf("%b", romHeader.RAM))
+	fmt.Println("Mapper:", mapper)
+	return "nil", nil
 }
