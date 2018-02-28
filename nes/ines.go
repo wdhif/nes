@@ -26,7 +26,7 @@ func Loader(romPath string) (string, error) {
 	fmt.Println("Loading NES ROM")
 	file, err := os.Open(romPath)
 	if err != nil {
-		return "nil", errors.New("File open error")
+		return "nil", errors.New("file open error")
 	}
 	defer file.Close()
 
