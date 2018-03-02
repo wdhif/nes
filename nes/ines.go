@@ -32,11 +32,10 @@ func Loader(romPath string) (string, error) {
 
 	romHeader := iNESFileHeader{}
 	binary.Read(file, binary.LittleEndian, &romHeader)
-	fmt.Println("Rom header:", romHeader)
 
 	// Check valid Magic Number against rom header
 	if romHeader.MagicNumber != iNESMagicNumber {
-		return "nil", errors.New("ROM is invalid: Invalid Magic Number")
+		return "nil", errors.New("file is not a valid ROM: Invalid Magic Number")
 	}
 	fmt.Println("ROM is valid")
 
@@ -44,6 +43,19 @@ func Loader(romPath string) (string, error) {
 	mapperLowerBits := romHeader.ControlByte1 >> 4
 	mapperHigherBits := romHeader.ControlByte2 >> 4
 	mapper := mapperHigherBits | mapperLowerBits<<1
+
+	fmt.Println()
+
+	fmt.Println("romHeader:", romHeader)
+	fmt.Println("MagicNumber:", romHeader.MagicNumber)
+	fmt.Print("ProgramROM: ", romHeader.ProgramROM, "x16k\n")
+	fmt.Print("CharacterROM: ", romHeader.CharacterROM, "x8k\n")
+	fmt.Println("ControlByte1:", romHeader.ControlByte1)
+	fmt.Println("ControlByte2:", romHeader.ControlByte2)
+	fmt.Println("RAM:", romHeader.RAM)
+	fmt.Println("Mapper:", mapper)
+
+	fmt.Println()
 
 	fmt.Println("romHeader in binary:", fmt.Sprintf("%b", romHeader))
 	fmt.Println("MagicNumber in binary:", fmt.Sprintf("%b", romHeader.MagicNumber))
