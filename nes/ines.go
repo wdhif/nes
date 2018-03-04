@@ -44,6 +44,17 @@ func Loader(romPath string) (string, error) {
 	mapperHigherBits := romHeader.ControlByte2 >> 4
 	mapper := mapperHigherBits | mapperLowerBits<<1
 
+	// Mirroring type
+	Mirror1 := int(romHeader.ControlByte1) & 1
+	Mirror2 := int(romHeader.ControlByte1>>3) & 1
+	Mirror := Mirror1 | Mirror2<<1
+
+	if Mirror == 0 {
+		fmt.Println("Mirror: Horizontal")
+	} else if Mirror == 1 {
+		fmt.Println("Mirror: Vertical")
+	}
+
 	fmt.Println()
 
 	fmt.Println("romHeader:", romHeader)
@@ -52,7 +63,13 @@ func Loader(romPath string) (string, error) {
 	fmt.Print("CharacterROM: ", romHeader.CharacterROM, "x8k\n")
 	fmt.Println("ControlByte1:", romHeader.ControlByte1)
 	fmt.Println("ControlByte2:", romHeader.ControlByte2)
-	fmt.Println("RAM:", romHeader.RAM)
+	fmt.Println("mapperLowerBits:", romHeader.ControlByte1>>4)
+	fmt.Println("mapperHigherBits:", romHeader.ControlByte2>>4)
+	if Mirror == 0 {
+		fmt.Println("Mirror: Horizontal")
+	} else if Mirror == 1 {
+		fmt.Println("Mirror: Vertical")
+	}
 	fmt.Println("Mapper:", mapper)
 
 	fmt.Println()
