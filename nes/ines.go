@@ -63,24 +63,29 @@ func Loader(romPath string) (string, error) {
 	fmt.Print("CharacterROM: ", romHeader.CharacterROM, "x8k\n")
 	fmt.Println("ControlByte1:", romHeader.ControlByte1)
 	fmt.Println("ControlByte2:", romHeader.ControlByte2)
-	fmt.Println("mapperLowerBits:", romHeader.ControlByte1>>4)
-	fmt.Println("mapperHigherBits:", romHeader.ControlByte2>>4)
-	if Mirror == 0 {
-		fmt.Println("Mirror: Horizontal")
-	} else if Mirror == 1 {
-		fmt.Println("Mirror: Vertical")
-	}
+	fmt.Println("mapperLowerBits:", mapperLowerBits)
+	fmt.Println("mapperHigherBits:", mapperHigherBits)
+	fmt.Println("mapperLowerBits:", Mirror1)
+	fmt.Println("mapperHigherBits:", Mirror2)
+	fmt.Println("Mirror:", Mirror)
+	fmt.Println("RAM in binary:", romHeader.RAM)
 	fmt.Println("Mapper:", mapper)
 
 	fmt.Println()
 
-	fmt.Println("romHeader in binary:", fmt.Sprintf("%b", romHeader))
-	fmt.Println("MagicNumber in binary:", fmt.Sprintf("%b", romHeader.MagicNumber))
-	fmt.Println("ProgramROM in binary:", fmt.Sprintf("%b", romHeader.ProgramROM))
-	fmt.Println("CharacterROM in binary:", fmt.Sprintf("%b", romHeader.CharacterROM))
-	fmt.Println("ControlByte1 in binary:", fmt.Sprintf("%b", romHeader.ControlByte1))
-	fmt.Println("ControlByte2 in binary:", fmt.Sprintf("%b", romHeader.ControlByte2))
-	fmt.Println("RAM in binary:", fmt.Sprintf("%b", romHeader.RAM))
-	fmt.Println("Mapper:", mapper)
+	fmt.Println("romHeader in binary:", fmt.Sprintf("%08b", romHeader))
+	fmt.Println("MagicNumber in binary:", fmt.Sprintf("%08b", romHeader.MagicNumber))
+	fmt.Println("ProgramROM in binary:", fmt.Sprintf("%08b", romHeader.ProgramROM))
+	fmt.Println("CharacterROM in binary:", fmt.Sprintf("%08b", romHeader.CharacterROM))
+	fmt.Println("ControlByte1 in binary:", fmt.Sprintf("%08b", romHeader.ControlByte1))
+	fmt.Println("ControlByte2 in binary:", fmt.Sprintf("%08b", romHeader.ControlByte2))
+	fmt.Println("mapperLowerBits:", fmt.Sprintf("%08b", mapperLowerBits))
+	fmt.Println("mapperHigherBits:", fmt.Sprintf("%08b", mapperHigherBits))
+	fmt.Println("Mirror1:", fmt.Sprintf("%08b", Mirror1))
+	fmt.Println("Mirror2:", fmt.Sprintf("%08b", Mirror2))
+	fmt.Println("Mirror:", fmt.Sprintf("%08b", Mirror))
+	fmt.Println("RAM in binary:", fmt.Sprintf("%08b", romHeader.RAM))
+	fmt.Println("Mapper:", fmt.Sprintf("%08b", mapper))
+
 	return "nil", nil
 }
