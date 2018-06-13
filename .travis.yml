@@ -1,3 +1,10 @@
 language: go
 
-script: go run main.go roms/nestest.nes
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -y libgl1-mesa-dev xorg-dev
+  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+  - dep ensure
+
+script:
+  - xvfb-run go run main.go roms/nestest.nes
