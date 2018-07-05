@@ -4,8 +4,8 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"os"
 	"io"
+	"os"
 )
 
 // iNES Magic Number is "NES" followed by MS-DOS end-of-file
