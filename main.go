@@ -32,19 +32,27 @@ func init() {
 
 func main() {
 	fmt.Fprint(os.Stdout, fmt.Sprintf(BANNER, "0.1.0"))
+
 	if len(os.Args) > 1 {
 		path := os.Args[1]
 		fmt.Println("Path to the rom:", path)
-		_, err := nes.Loader(path)
+
+		rom, err := nes.Loader(path)
 		if err != nil {
 			log.Fatal(err)
 		}
-		gErr := glfw.Init()
-		if gErr != nil {
-			panic(gErr)
+
+		fmt.Println("Printing ROM data")
+		fmt.Println(rom)
+
+		// GLFW Init
+		err = glfw.Init()
+		if err != nil {
+			panic(err)
 		}
 		defer glfw.Terminate()
 
+		// Window Creation
 		window, err := glfw.CreateWindow(640, 480, "NES", nil, nil)
 		if err != nil {
 			panic(err)
@@ -52,6 +60,7 @@ func main() {
 
 		window.MakeContextCurrent()
 
+		// GLFW Loop
 		for !window.ShouldClose() {
 			// Do OpenGL stuff.
 			window.SwapBuffers()

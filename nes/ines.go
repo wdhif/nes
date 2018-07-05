@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"text/tabwriter"
+	"io"
 )
 
 // iNES Magic Number is "NES" followed by MS-DOS end-of-file
@@ -23,14 +23,12 @@ type iNESFileHeader struct {
 }
 
 // Loader reads an iNES file and return a ROM
-func Loader(romPath string) (string, error) {
+func Loader(romPath string) (*Rom, error) {
 
-	DEBUG := false
-
-	fmt.Println("Loading NES ROM")
+	fmt.Print("Loading NES ROM... ")
 	file, err := os.Open(romPath)
 	if err != nil {
-		return "nil", errors.New("file open error")
+		return nil, errors.New("file open error")
 	}
 	defer file.Close()
 
@@ -39,69 +37,42 @@ func Loader(romPath string) (string, error) {
 
 	// Check valid Magic Number against rom header
 	if romHeader.MagicNumber != iNESMagicNumber {
-		return "nil", errors.New("file is not a valid ROM: Invalid Magic Number")
+		return nil, errors.New("file is not a valid ROM: Invalid Magic Number")
 	}
 	fmt.Println("ROM is valid")
 
-	// Mapper type ()
+	// ProgramRom
+	ProgramRom := make([]byte, int(romHeader.ProgramROMBanksNumber)*16384)
+	if _, err := io.ReadFull(file, ProgramRom); err != nil {
+		return nil, err
+	}
+
+	// CharacterRom
+	CharacterRom := make([]byte, int(romHeader.CharacterROMBanksNumber)*8192)
+	if _, err := io.ReadFull(file, CharacterRom); err != nil {
+		return nil, err
+	}
+
+	// Mapper
 	mapperLowerBits := romHeader.ControlByte1 >> 4
 	mapperHigherBits := romHeader.ControlByte2 >> 4
-	mapper := mapperHigherBits | mapperLowerBits<<1
+	Mapper := mapperHigherBits | mapperLowerBits<<1
 
-	// Mirroring type
+	// Mirroring
 	Mirror1 := int(romHeader.ControlByte1) & 1
 	Mirror2 := int(romHeader.ControlByte1>>3) & 1
 	Mirror := Mirror1 | Mirror2<<1
 
-	fmt.Println()
+	// Battery
+	Battery := romHeader.ControlByte1&2 == 2
 
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 0, ' ', tabwriter.AlignRight)
-
-	fmt.Fprintln(w, "ProgramROM Size:\t", romHeader.ProgramROMBanksNumber*16, "\tKb")
-	fmt.Fprintln(w, "CharacterROM Size:\t", romHeader.CharacterROMBanksNumber*8, "\tKb")
-	if Mirror == 0 {
-		fmt.Fprintln(w, "Mirror Type:\t", "Horizontal")
-	} else if Mirror == 1 {
-		fmt.Fprintln(w, "Mirror Type:\t", "Vertical")
-	}
-	fmt.Fprintln(w, "Mapper Number:\t", mapper)
-	w.Flush()
-
-	if DEBUG == true {
-		fmt.Println()
-
-		fmt.Fprintln(w, "romHeader:\t", romHeader)
-		fmt.Fprintln(w, "MagicNumber:\t", romHeader.MagicNumber)
-		fmt.Fprintln(w, "ProgramROM:\t", romHeader.ProgramROMBanksNumber, "\tx16k")
-		fmt.Fprintln(w, "CharacterROM:\t", romHeader.CharacterROMBanksNumber, "x8k")
-		fmt.Fprintln(w, "ControlByte1:\t", romHeader.ControlByte1)
-		fmt.Fprintln(w, "ControlByte2:\t", romHeader.ControlByte2)
-		fmt.Fprintln(w, "mapperLowerBits:\t", mapperLowerBits)
-		fmt.Fprintln(w, "mapperHigherBits:\t", mapperHigherBits)
-		fmt.Fprintln(w, "mapperLowerBits:\t", Mirror1)
-		fmt.Fprintln(w, "mapperHigherBits:\t", Mirror2)
-		fmt.Fprintln(w, "Mirror:\t", Mirror)
-		fmt.Fprintln(w, "RAM:\t", romHeader.RAM)
-		fmt.Fprintln(w, "Mapper:\t", mapper)
-		w.Flush()
-
-		fmt.Println()
-
-		fmt.Fprintln(w, "romHeader in binary:\t", fmt.Sprintf("%08b", romHeader))
-		fmt.Fprintln(w, "MagicNumber in binary:\t", fmt.Sprintf("%08b", romHeader.MagicNumber))
-		fmt.Fprintln(w, "ProgramROM in binary:\t", fmt.Sprintf("%08b", romHeader.ProgramROMBanksNumber))
-		fmt.Fprintln(w, "CharacterROM in binary:\t", fmt.Sprintf("%08b", romHeader.CharacterROMBanksNumber))
-		fmt.Fprintln(w, "ControlByte1 in binary:\t", fmt.Sprintf("%08b", romHeader.ControlByte1))
-		fmt.Fprintln(w, "ControlByte2 in binary:\t", fmt.Sprintf("%08b", romHeader.ControlByte2))
-		fmt.Fprintln(w, "mapperLowerBits in binary:\t", fmt.Sprintf("%08b", mapperLowerBits))
-		fmt.Fprintln(w, "mapperHigherBits in binary:\t", fmt.Sprintf("%08b", mapperHigherBits))
-		fmt.Fprintln(w, "Mirror1 in binary:\t", fmt.Sprintf("%08b", Mirror1))
-		fmt.Fprintln(w, "Mirror2 in binary:\t", fmt.Sprintf("%08b", Mirror2))
-		fmt.Fprintln(w, "Mirror in binary:\t", fmt.Sprintf("%08b", Mirror))
-		fmt.Fprintln(w, "RAM in binary:\t", fmt.Sprintf("%08b", romHeader.RAM))
-		fmt.Fprintln(w, "Mapper in binary:\t", fmt.Sprintf("%08b", mapper))
-		w.Flush()
+	rom := Rom{
+		ProgramRom:   ProgramRom,
+		CharacterROM: CharacterRom,
+		Mapper:       int(Mapper),
+		Mirror:       Mirror,
+		Battery:      Battery,
 	}
 
-	return "nil", nil
+	return &rom, nil
 }
