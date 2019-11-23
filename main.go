@@ -29,16 +29,16 @@ func main() {
 		path := os.Args[1]
 		fmt.Println("Path to the rom:", path)
 
-		rom, err := nes.Loader(path)
+		Nes, err := nes.NewNES(path)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		fmt.Println("Printing ROM data")
-		fmt.Println(rom)
+		fmt.Println("Printing CPU Status")
+		fmt.Println(Nes.Cpu)
 
 		ui.Run()
 	} else {
-		fmt.Println("Usage go run main.go roms/nestest.nes")
+		fmt.Println("Usage: go run main.go roms/nestest.nes")
 	}
 }
