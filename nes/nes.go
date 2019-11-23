@@ -1,9 +1,19 @@
 package nes
 
-type Memory interface {
-	Read(address uint16) byte
-	Read16(address uint16) uint16
-	Write(address uint16, value byte)
+import "log"
+
+type NES struct {
+	Cpu			*CPU
+	Memory		*Memory
+	Rom			*Rom
 }
 
-func NewMemory(nes *Nes)
+func NewNES(path string) (*NES, error) {
+	rom, err := Loader(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	nes := NES{NewCpu(), NewMemory(), rom}
+	return &nes, nil
+}
