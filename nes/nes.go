@@ -3,9 +3,9 @@ package nes
 import "log"
 
 type NES struct {
-	Cpu			*CPU
-	Memory		*Memory
-	Rom			*Rom
+	Cpu    *CPU
+	Memory *Memory
+	Rom    *Rom
 }
 
 func NewNES(path string) (*NES, error) {

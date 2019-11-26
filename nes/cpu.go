@@ -18,7 +18,7 @@ type CPU struct {
 	}
 }
 
-func NewCpu() *CPU{
+func NewCpu() *CPU {
 	cpu := CPU{}
 	cpu.Reset()
 	return &cpu
