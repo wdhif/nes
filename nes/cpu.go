@@ -151,8 +151,8 @@ func (cpu *CPU) Eor(address uint16) {
 }
 func (cpu *CPU) Bit(address uint16) {
 	cpu.A &= cpu.Memory[address]
-	cpu.setFlag(Negative, (cpu.Memory[address] & 0b10000000) == 1)
-	cpu.setFlag(Overflow, (cpu.Memory[address] & 0b01000000) == 1)
+	cpu.setFlag(Negative, (cpu.Memory[address] & 128) == 1)
+	cpu.setFlag(Overflow, (cpu.Memory[address] & 64) == 1)
 	cpu.setFlag(Zero, cpu.A == 0)
 }
 func (cpu *CPU) Lsr() {
@@ -161,24 +161,24 @@ func (cpu *CPU) Lsr() {
 	cpu.A = cpu.A >> 1
 }
 func (cpu *CPU) Asl() {
-	cpu.setFlag(Overflow, (cpu.A & 0b10000000) == 1)
+	cpu.setFlag(Overflow, (cpu.A & 128) == 1)
 	cpu.A = cpu.A << 1
 }
 func (cpu *CPU) Rol() {
 	carryFlag := cpu.P & Carry
-	oldBit7 := cpu.A & 0b10000000
+	oldBit7 := cpu.A & 128
 	cpu.A = cpu.A << 1
 	if (carryFlag != 0) {
-		cpu.A |= 0b00000001
+		cpu.A |= 1
 	}
 	cpu.setFlag(Carry, oldBit7 != 0)
 }
 func (cpu *CPU) Ror() {
 	carryFlag := cpu.P & Carry
-	oldBit0 := cpu.A & 0b00000001
+	oldBit0 := cpu.A & 1
 	cpu.A = cpu.A >> 1
 	if (carryFlag != 0) {
-		cpu.A |= 0b10000000
+		cpu.A |= 128
 	}
 	cpu.setFlag(Carry, oldBit0 != 0)
 }
