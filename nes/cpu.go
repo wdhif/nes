@@ -256,16 +256,13 @@ func (cpu *CPU) Plp() {
 // End
 
 // Comparisons
-func (cpu *CPU) Cmp(address uint16) {
-	value := cpu.Memory[address]
+func (cpu *CPU) Cmp(value byte) {
 	cpu.cmp(cpu.A, value)
 }
-func (cpu *CPU) Cpx(address uint16) {
-	value := cpu.Memory[address]
+func (cpu *CPU) Cpx(value byte) {
 	cpu.cmp(cpu.X, value)
 }
-func (cpu *CPU) Cpy(address uint16) {
-	value := cpu.Memory[address]
+func (cpu *CPU) Cpy(value byte) {
 	cpu.cmp(cpu.Y, value)
 }
 // End
