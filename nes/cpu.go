@@ -1,6 +1,5 @@
 package nes
 
-import "fmt"
 import "math/bits"
 
 const (
