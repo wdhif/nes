@@ -185,25 +185,25 @@ func (cpu *CPU) Ror() {
 
 // P register functions
 func (cpu *CPU) Clc() {
-	cpu.setFlag(Carry, false);
+	cpu.setFlag(Carry, false)
 }
 func (cpu *CPU) Cld() {
-	cpu.setFlag(DecimalMode, false);
+	cpu.setFlag(DecimalMode, false)
 }
 func (cpu *CPU) Cli() {
-	cpu.setFlag(InterruptDisable, false);
+	cpu.setFlag(InterruptDisable, false)
 }
 func (cpu *CPU) Clv() {
-	cpu.setFlag(Overflow, false);
+	cpu.setFlag(Overflow, false)
 }
 func (cpu *CPU) Sec() {
-	cpu.setFlag(Carry, true);
+	cpu.setFlag(Carry, true)
 }
 func (cpu *CPU) Sed() {
-	cpu.setFlag(DecimalMode, true);
+	cpu.setFlag(DecimalMode, true)
 }
 func (cpu *CPU) Sei() {
-	cpu.setFlag(InterruptDisable, true);
+	cpu.setFlag(InterruptDisable, true)
 }
 // End
 
