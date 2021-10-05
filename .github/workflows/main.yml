@@ -1,0 +1,15 @@
+name: main
+on: [push]
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+      - run: sudo apt update
+      - run: sudo apt-get install -y libgl1-mesa-dev xorg-dev
+      - run: mkdir -p ~/go/bin
+      - run: curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+      - run: go test
+
