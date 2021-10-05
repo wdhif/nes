@@ -1,4 +1,5 @@
 # NES
+![](https://github.com/wdhif/nes/actions/workflows/main.yml/badge.svg)
 
 A Nintendo Entertainment System emulator in Go
 
