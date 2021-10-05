@@ -12,7 +12,7 @@ import (
 func TestMain(m *testing.M) {
 	fmt.Fprint(os.Stdout, fmt.Sprintf(BANNER, "0.1.0"))
 	if len(os.Args) > 1 {
-		path := os.Args[1]
+		path := "roms/nestest.nes"
 		fmt.Println("Path to the rom:", path)
 		_, err := nes.Loader(path)
 		if err != nil {
